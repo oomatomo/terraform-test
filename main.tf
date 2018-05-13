@@ -52,3 +52,30 @@ resource "aws_subnet" "test_c" {
     Name = "test_c"
   }
 }
+
+resource "aws_security_group" "test_bridge" {
+  vpc_id = "${aws_vpc.test.id}"
+  # if changed, forces new resource.
+  name = "test_bridge"
+  tags {
+    Name = "test_bridge"
+  }
+}
+
+resource "aws_security_group_rule" "test_bridge_ingress_ssh" {
+  security_group_id = "${aws_security_group.test_bridge.id}"
+  type = "ingress"
+  from_port   = 22
+  to_port     = 22
+  protocol    = "tcp"
+  cidr_blocks = ["${var.bridge_ip}/32"]
+}
+
+resource "aws_security_group_rule" "test_bridge_egress" {
+  security_group_id = "${aws_security_group.test_bridge.id}"
+  type = "egress"
+  from_port   = 0
+  to_port     = 0
+  protocol    = "-1"
+  cidr_blocks = ["0.0.0.0/0"]
+}
