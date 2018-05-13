@@ -8,3 +8,10 @@ resource "aws_vpc" "vpc_test" {
     Name = "vpc_test"
   }
 }
+
+resource "aws_internet_gateway" "internet_gateway_test" {
+  vpc_id = "${aws_vpc.vpc_test.id}"
+  tags {
+    Name = "internet_gateway_test"
+  }
+}
