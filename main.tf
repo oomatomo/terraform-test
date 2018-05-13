@@ -79,3 +79,23 @@ resource "aws_security_group_rule" "test_bridge_egress" {
   protocol    = "-1"
   cidr_blocks = ["0.0.0.0/0"]
 }
+
+resource "aws_instance" "bridge" {
+  instance_type = "t2.micro"
+  private_ip = "10.0.1.10"
+  subnet_id  = "${aws_subnet.test_a.id}"
+  key_name = "${var.ec2_key_name}"
+  ami = "${var.ec2_ami}"
+  vpc_security_group_ids = ["${aws_security_group.test_bridge.id}"]
+  root_block_device = {
+    volume_type = "gp2"
+    volume_size = "10"
+  }
+  tags {
+    Name = "test_bridge"
+  }
+}
+
+resource "aws_eip" "bridge" {
+  instance = "${aws_instance.bridge.id}"
+}

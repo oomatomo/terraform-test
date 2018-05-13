@@ -4,3 +4,5 @@ variable "region" {
   default = "ap-northeast-1"
 }
 variable "bridge_ip" {}
+variable "ec2_ami" {}
+variable "ec2_key_name" {}
