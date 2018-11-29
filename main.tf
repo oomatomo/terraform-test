@@ -6,6 +6,7 @@ resource "aws_vpc" "test" {
   cidr_block = "10.0.0.0/16"
   tags {
     Name = "test"
+    group = "${var.tag_group_name}"
   }
 }
 
@@ -13,22 +14,24 @@ resource "aws_internet_gateway" "test" {
   vpc_id = "${aws_vpc.test.id}"
   tags {
     Name = "test"
+    group = "${var.tag_group_name}"
   }
 }
 
-data "aws_route_table" "test" {
-  vpc_id = "${aws_vpc.test.id}"
-}
-
-#resource "aws_route_table" "route_table_test" {
+#data "aws_route_table" "test" {
 #  vpc_id = "${aws_vpc.test.id}"
-#  tags {
-#      Name = "route_table_test"
-#  }
 #}
 
+resource "aws_route_table" "test" {
+  vpc_id = "${aws_vpc.test.id}"
+  tags {
+    Name = "route_table_test"
+    group = "${var.tag_group_name}"
+  }
+}
+
 resource "aws_route" "test" {
-  route_table_id = "${data.aws_route_table.test.id}"
+  route_table_id = "${aws_route_table.test.id}"
   destination_cidr_block = "0.0.0.0/0"
   gateway_id = "${aws_internet_gateway.test.id}"
 }
@@ -40,6 +43,7 @@ resource "aws_subnet" "test_a" {
   map_public_ip_on_launch = false
   tags {
     Name = "test_a"
+    group = "${var.tag_group_name}"
   }
 }
 
@@ -50,6 +54,7 @@ resource "aws_subnet" "test_c" {
   map_public_ip_on_launch = false
   tags {
     Name = "test_c"
+    group = "${var.tag_group_name}"
   }
 }
 
@@ -59,6 +64,7 @@ resource "aws_security_group" "test_bridge" {
   name = "test_bridge"
   tags {
     Name = "test_bridge"
+    group = "${var.tag_group_name}"
   }
 }
 
@@ -93,9 +99,13 @@ resource "aws_instance" "bridge" {
   }
   tags {
     Name = "test_bridge"
+    group = "${var.tag_group_name}"
   }
 }
 
 resource "aws_eip" "bridge" {
   instance = "${aws_instance.bridge.id}"
+  tags {
+    group = "${var.tag_group_name}"
+  }
 }

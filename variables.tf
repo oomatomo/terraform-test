@@ -6,3 +6,4 @@ variable "region" {
 variable "bridge_ip" {}
 variable "ec2_ami" {}
 variable "ec2_key_name" {}
+variable "tag_group_name" {}
